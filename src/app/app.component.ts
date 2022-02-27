@@ -1,3 +1,5 @@
+import * as gitHistoryData from '../assets/git-repo-stat.json';
+
 import { Component } from '@angular/core';
 import { IFullGitHistory } from './modules/full-git-history/interfaces/full-git-history.interface';
 
@@ -8,17 +10,9 @@ import { IFullGitHistory } from './modules/full-git-history/interfaces/full-git-
 })
 export class AppComponent {
   title = 'git-stat-visualizer';
-  commits: {
-    [name: string]: number;
-  } = {};
+  gitHistory: IFullGitHistory = gitHistoryData as unknown as IFullGitHistory;
 
   onParsedGitHistoryUploaded(parsedGitHistory: IFullGitHistory) {
-    parsedGitHistory.commits.forEach((commit) => {
-      if (!this.commits[commit.committer.user.name]) {
-        this.commits[commit.committer.user.name] = 0;
-      }
-
-      this.commits[commit.committer.user.name]++;
-    });
+    this.gitHistory = parsedGitHistory;
   }
 }

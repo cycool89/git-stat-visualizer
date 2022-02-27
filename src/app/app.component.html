@@ -1,6 +1,4 @@
 <app-upload-full-git-history
   (parsedGitHistoryUploaded)="onParsedGitHistoryUploaded($event)"
 ></app-upload-full-git-history>
-<div *ngFor="let commit of commits | keyvalue">
-  {{ commit.key }} : {{ commit.value }} <br>
-</div>
+<app-commit-count-race [gitHistory]="gitHistory"></app-commit-count-race>
