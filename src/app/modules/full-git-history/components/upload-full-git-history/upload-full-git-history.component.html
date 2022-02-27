@@ -1,0 +1,10 @@
+<input type="file" class="file-input" accept="application/json" (change)="onFileSelected($event)" #fileUpload>
+
+<div class="file-upload">
+
+  {{ fileName || "Nincs még feltöltött file" }}
+
+  <button class="upload-btn"
+          (click)="fileUpload.click()">Feltöltés
+  </button>
+</div>

@@ -1,1 +1,7 @@
-Hello world!
+<app-upload-full-git-history
+  (parsedGitHistoryUploaded)="onParsedGitHistoryUploaded($event)"
+></app-upload-full-git-history>
+<br>
+<div *ngFor="let commit of commits | keyvalue">
+  {{ commit.key }} : {{ commit.value }} <br>
+</div>
