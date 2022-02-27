@@ -18,6 +18,7 @@ export class UploadFullGitHistoryComponent implements OnInit {
 
   onFileSelected($event: any) {
     const selectedFile = $event.target.files[0];
+    this.fileName = selectedFile.name;
 
     const fileReader = new FileReader();
     fileReader.readAsText(selectedFile, "UTF-8");
