@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 import { Component, Input, OnInit } from '@angular/core';
-import { IFullGitHistory } from '../../interfaces/full-git-history.interface';
+import { ICommitRace } from './interfaces/commit-race.interface';
 
 @Component({
   selector: 'app-commit-count-race',
@@ -8,108 +8,119 @@ import { IFullGitHistory } from '../../interfaces/full-git-history.interface';
   styleUrls: ['./commit-count-race.component.scss']
 })
 export class CommitCountRaceComponent implements OnInit {
-  get gitHistory(): IFullGitHistory {
+  private fontSize!: number;
+  private rectProperties!: { padding: number; height: number };
+  private container!: d3.Selection<any, unknown, HTMLElement, any>;
+  private widthScale!: d3.ScaleLinear<number, number, never>;
+  private axisTop!: d3.Selection<any, unknown, HTMLElement, any>;
+  get gitHistory(): ICommitRace[] {
     return this._gitHistory;
   }
 
   @Input()
-  set gitHistory(value: IFullGitHistory) {
+  set gitHistory(value: ICommitRace[]) {
     this._gitHistory = value;
   }
 
-  private _gitHistory!: IFullGitHistory;
+  private _gitHistory: ICommitRace[] = [];
 
-  margin = { top: 20, right: 30, bottom: 40, left: 90 };
-  width = 800 - this.margin.left - this.margin.right;
-  height = 800 - this.margin.top - this.margin.bottom;
+  private width = 0;
+  private height = 0;
+  private ticker = 500;
 
   private svg!: d3.Selection<SVGGElement, unknown, HTMLElement, any>;
   private xScaler!: d3.ScaleLinear<number, number, never>;
   private yScaler!: d3.ScaleBand<string>;
 
+  private commitCount!: {
+    [userName: string]: number;
+  };
+
   constructor() {
   }
 
-  ngOnInit(): void {
-    // TODO after each commit
-    // Look at user's name and store uniquelly
-    // Increment commit count for that name
-    // Change x axis max value
-    // Sort by commit count DESC
-    // Add / change user commit count data on bars
-    //
-    this.svg = this.createSvg();
-    this.xScaler = this.createXScaler();
-    this.svg.append('g')
-      .attr('transform', 'translate(0,' + this.height + ')')
-      .call(d3.axisBottom(this.xScaler))
-      .selectAll('text')
-      .attr('transform', 'translate(-10,0) rotate(-45)')
-      .style('text-anchor', 'end');
-
-    this.yScaler = this.createYScaler();
-
-    this.svg.append('g')
-      .call(d3.axisLeft(this.yScaler));
-
-    this.addBars();
+  async ngOnInit() {
+    await this.draw();
   }
 
   private createSvg(): d3.Selection<SVGGElement, unknown, HTMLElement, any> {
-    return d3.select('#commitCountRaceSVG')
-      .append('svg')
-      .attr('width', this.width + this.margin.left + this.margin.right)
-      .attr('height', this.height + this.margin.top + this.margin.bottom)
+    return d3.select('#commitCountRaceSVG');
+  }
+
+  // https://medium.com/analytics-vidhya/building-racing-bar-chart-in-d3js-d89b71cd3439
+  private async draw() {
+    this.commitCount = {};
+    this.svg = this.createSvg();
+    this.width = this.svg.node()?.clientWidth || 0;
+    this.height = this.svg.node()?.clientHeight || 0;
+
+    this.fontSize = 16;
+    this.rectProperties = { height: 20, padding: 10 };
+    this.container = this.svg.append("g")
+      .classed("container", true)
+      .style("transform", "translateY(25px)");
+
+
+    this.widthScale = d3.scaleLinear();
+    this.axisTop = this.svg
       .append('g')
-      .attr('transform',
-        'translate(' + this.margin.left + ',' + this.margin.top + ')');
+      .classed('axis', true)
+      .style("transform", "translate(10px, 20px)")
+      .call(d3.axisTop(this.widthScale));
+
+    for (const commit of this.gitHistory) {
+      this.update(commit);
+      await new Promise<void>(done => setTimeout(() => done(), this.ticker));
+    }
   }
 
-  private createXScaler(maxWidth = 0): d3.ScaleLinear<number, number, never> {
-    return d3.scaleLinear()
-      .domain([0, maxWidth])
-      .range([0, this.width]);
-  }
+  private update = (commit: ICommitRace) => {
+    this.processEachCommit(commit);
+    this.widthScale.domain([0, Math.max(...Object.values(this.commitCount))])
+      .range([0, this.width - this.fontSize - 50])
 
-  private createYScaler(): d3.ScaleBand<string> {
-    return d3.scaleBand()
-      .range([0, this.height])
-      .domain(this._gitHistory.commits.map(
-        (d) => {
-          return d.committer.user.name || '';
-        }) || []).padding(.1);
-  }
+    this.axisTop
+      .transition()
+      .duration(this.ticker / 1.2)
+      .ease(d3.easeLinear)
+      .call(d3.axisTop(this.widthScale))
 
-  private addBars(): void {
-    const count: {
-      [userName: string]: number;
-    } = {};
-    let max = 0;
+    const sortedRange = [...Object.values(this.commitCount)].sort((a,b) => b - a)
 
-    this.svg.selectAll('myRect')
-      .data(this._gitHistory.commits || [])
+    this.container
+      .selectAll("text")
+      .data(Object.values(this.commitCount))
       .enter()
-      .each(d => {
-        if (!count[d.committer.user.name]) {
-          count[d.committer.user.name] = 0;
-        }
-        count[d.committer.user.name]++;
+      .append("text")
 
-        if (count[d.committer.user.name] > max) {
-          max = count[d.committer.user.name];
-        }
+    this.container
+      .selectAll("text")
+      .text(d => d.key + " "+ d.value)
+      .transition()
+      .delay(500)
+      .attr("x", d => this.widthScale(d.value) + this.fontSize)
+      .attr("y", (d,i) => sortedRange.findIndex(e => e.key === d.key) * (rectProperties.height + rectProperties.padding) + fontSize)
 
-        this.xScaler = this.createXScaler(max);
-      })
-      .append('rect')
-      .attr('x', this.xScaler(0))
-      .attr('y', (d) => {
-        return this.yScaler(d.committer.user.name || '') || '';
-      })
-      .attr('width', (d) => {
-        return this.xScaler(count[d.committer.user.name]) || 0;
-      })
-      .attr('height', this.yScaler.bandwidth())
-      .attr('fill', '#69b3a2');
+    this.container
+      .selectAll("rect")
+      .data(presentData)
+      .enter()
+      .append("rect");
+
+    this.container
+      .selectAll("rect")
+      .attr("x", 10)
+      .transition()
+      .delay(500)
+      .attr("y", (d,i) => sortedRange.findIndex(e => e.key === d.key) * (rectProperties.height + rectProperties.padding))
+      .attr("width", d => d.value <= 0? 0 : this.widthScale(d.value))
+      .attr("height", 20);
+  }
+
+  private processEachCommit(commit: ICommitRace): void {
+    if (!this.commitCount[commit.name]) {
+      this.commitCount[commit.name] = 0;
+    }
+    this.commitCount[commit.name]++;
   }
 }
