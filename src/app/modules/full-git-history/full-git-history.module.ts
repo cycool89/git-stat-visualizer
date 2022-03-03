@@ -3,10 +3,12 @@ import { UploadFullGitHistoryComponent } from './components/upload-full-git-hist
 import { CommitCountRaceComponent } from './components/commit-count-race/commit-count-race.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { UploadGitMailmapComponent } from './components/upload-git-mailmap/upload-git-mailmap.component';
 
 @NgModule({
   declarations: [
     UploadFullGitHistoryComponent,
+    UploadGitMailmapComponent,
     CommitCountRaceComponent
   ],
   imports: [
@@ -15,6 +17,7 @@ import { FormsModule } from '@angular/forms';
   ],
   exports: [
     UploadFullGitHistoryComponent,
+    UploadGitMailmapComponent,
     CommitCountRaceComponent
   ]
 })

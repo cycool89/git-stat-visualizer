@@ -23,10 +23,20 @@ export class CommitCountRaceComponent implements OnInit {
   @Input()
   set gitHistory(value: ICommitRace[]) {
     this._gitHistory = value;
-    this.draw();
   }
 
   private _gitHistory: ICommitRace[] = [];
+
+  get gitMailmap(): string[][] {
+    return this._gitMailmap;
+  }
+
+  @Input()
+  set gitMailmap(value: string[][]) {
+    this._gitMailmap = value;
+  }
+
+  private _gitMailmap: string[][] = [];
 
   private width = 0;
   private height = 0;
@@ -34,8 +44,17 @@ export class CommitCountRaceComponent implements OnInit {
 
   private svg!: d3.Selection<SVGGElement, unknown, HTMLElement, any>;
 
+  private unknownEmails: string[] =[];
+
   public commitCount!: {
     [userName: string]: number;
+  };
+
+  public commitData!: {
+    [userName: string]: {
+      count: number;
+      color: string;
+    };
   };
 
   constructor() {
@@ -44,19 +63,17 @@ export class CommitCountRaceComponent implements OnInit {
   ngOnInit() {
   }
 
-  private createSvg(): d3.Selection<SVGGElement, unknown, HTMLElement, any> {
-    return d3.select('#commitCountRaceSVG');
-  }
-
   // https://medium.com/analytics-vidhya/building-racing-bar-chart-in-d3js-d89b71cd3439
-  private async draw() {
+  async draw() {
     this.commitCount = {};
+    this.commitData = {};
+    this.unknownEmails = [];
     this.svg = this.createSvg();
     this.width = this.svg.node()?.clientWidth || 0;
     this.height = this.svg.node()?.clientHeight || 0;
 
     this.fontSize = 16;
-    this.rectProperties = { height: 20, padding: 10 };
+    this.rectProperties = { height: 20, padding: 3 };
     this.container?.remove();
     // @ts-ignore
     this.container = this.svg.append('g')
@@ -81,6 +98,7 @@ export class CommitCountRaceComponent implements OnInit {
       }
       i++;
     }
+    console.log(this.unknownEmails);
   }
 
   private update = (commit: ICommitRace) => {
@@ -132,9 +150,13 @@ export class CommitCountRaceComponent implements OnInit {
     this.container
       .selectAll('rect')
       .attr('x', 10)
+      .style('stroke', '#999999')
       .transition()
       .delay(this.ticker)
-      .attr('y', (d,i) => {
+      .style('fill', (d) => {
+        // @ts-ignore
+        return this.commitData[d.key].color;
+      }).attr('y', (d,i) => {
         // @ts-ignore
         const indexInSortedRange = sortedRange.findIndex(e => e.key === d.key);
         const rectHeight = this.rectProperties.height + this.rectProperties.padding;
@@ -149,10 +171,26 @@ export class CommitCountRaceComponent implements OnInit {
   }
 
   private processEachCommit(commit: ICommitRace): void {
-    if (!this.commitCount[commit.name]) {
-      this.commitCount[commit.name] = 0;
+    const uniqueName: string | undefined = this.gitMailmap.find((entryRow) => {
+      return entryRow.some((entry) => entry.toLowerCase() === commit.email.toLowerCase());
+    })?.[0];
+
+    if (!uniqueName) this.unknownEmails.push(commit.email);
+
+    if (!this.commitCount[uniqueName || commit.name]) {
+      var randomColor = Math.floor(Math.random()*16777215).toString(16);
+      this.commitCount[uniqueName || commit.name] = 0;
+      this.commitData[uniqueName || commit.name] = {
+        color: '#' + randomColor,
+        count: 0
+      }
     }
     this.lastDate = new Date(commit.date);
-    this.commitCount[commit.name]++;
+    this.commitCount[uniqueName || commit.name]++;
+    this.commitData[uniqueName || commit.name].count++;
+  }
+
+  private createSvg(): d3.Selection<SVGGElement, unknown, HTMLElement, any> {
+    return d3.select('#commitCountRaceSVG');
   }
 }

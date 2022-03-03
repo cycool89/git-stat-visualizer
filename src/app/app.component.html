@@ -1,4 +1,10 @@
 <app-upload-full-git-history
   (parsedGitHistoryUploaded)="onParsedGitHistoryUploaded($event)"
 ></app-upload-full-git-history>
-<app-commit-count-race [gitHistory]="commitRaceData"></app-commit-count-race>
+<app-upload-git-mailmap
+(parsedGitMailmapUploaded)="onParsedGitMailmapUploaded($event)"
+></app-upload-git-mailmap>
+<app-commit-count-race
+  [gitHistory]="commitRaceData"
+  [gitMailmap]="mailMap">
+</app-commit-count-race>

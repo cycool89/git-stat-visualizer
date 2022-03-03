@@ -13,9 +13,9 @@ export class AppComponent implements OnInit {
   title = 'git-stat-visualizer';
   gitHistory!: IFullGitHistory;
   commitRaceData: ICommitRace[] = [];
+  mailMap: string[][] = [];
 
   ngOnInit() {
-    // this.onParsedGitHistoryUploaded(gitHistoryData as unknown as IFullGitHistory);
   }
 
   onParsedGitHistoryUploaded(parsedGitHistory: IFullGitHistory) {
@@ -28,5 +28,9 @@ export class AppComponent implements OnInit {
         date: new Date(commit.committer.date)
       }
     });
+  }
+
+  onParsedGitMailmapUploaded(parsedMailmap: string[][]) {
+    this.mailMap = parsedMailmap;
   }
 }
