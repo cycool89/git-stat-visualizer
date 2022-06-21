@@ -93,15 +93,16 @@ export class CommitCountRaceComponent implements OnInit {
     for (const commit of this.gitHistory) {
       this.processEachCommit(commit);
       if (i % (this.speed * this.multiplier) === 0) {
-        this.update(commit);
+        this.update();
         await new Promise<void>(done => setTimeout(() => done(), this.ticker));
       }
       i++;
     }
+    this.update();
     console.log(this.unknownEmails);
   }
 
-  private update = (commit: ICommitRace) => {
+  private update = () => {
     const presentData = Object.keys(this.commitCount)
       .map(key => ({key, value: this.commitCount[key]}));
     this.widthScale.domain([0, Math.max(...Object.values(this.commitCount))])
