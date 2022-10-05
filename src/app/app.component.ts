@@ -23,8 +23,8 @@ export class AppComponent implements OnInit {
 
     this.commitRaceData = parsedGitHistory.commits.reverse().map((commit): ICommitRace => {
       return {
-        name: commit.committer.user.name,
-        email: commit.committer.user.email,
+        name: commit.author.user.name,
+        email: commit.author.user.email,
         date: new Date(commit.committer.date)
       }
     });
