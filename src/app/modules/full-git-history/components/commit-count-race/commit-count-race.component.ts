@@ -11,13 +11,13 @@ export class CommitCountRaceComponent implements OnInit {
   lastDate!: Date;
   speed: number = 5;
   multiplier: number = 1;
+  firstIncludableCommitDate!: number;
+  lastIncludableCommitDate!: number;
   private fontSize!: number;
   private rectProperties!: { padding: number; height: number };
   private container!: d3.Selection<SVGGElement, {key: string, value: number}[], HTMLElement, any>;
   private widthScale!: d3.ScaleLinear<number, number, never>;
   private axisTop!: d3.Selection<any, unknown, HTMLElement, any>;
-  protected firstIncludableCommitDate!: number;
-  protected lastIncludableCommitDate!: number;
 
   get gitHistory(): ICommitRace[] {
     return this._gitHistory;
@@ -26,8 +26,8 @@ export class CommitCountRaceComponent implements OnInit {
   @Input()
   set gitHistory(value: ICommitRace[]) {
     this._gitHistory = value;
-    this.firstIncludableCommitDate = value[0].date.getTime();
-    this.lastIncludableCommitDate = value[value.length - 1].date.getTime();
+    this.firstIncludableCommitDate = value?.[0]?.date.getTime();
+    this.lastIncludableCommitDate = value?.[value.length - 1]?.date.getTime();
   }
 
   private _gitHistory: ICommitRace[] = [];
@@ -66,6 +66,20 @@ export class CommitCountRaceComponent implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  onFromDateChanged($event: Event) {
+    const target = $event.target as HTMLInputElement;
+    const selectedDate = new Date(target?.value);
+
+    this.firstIncludableCommitDate = selectedDate.getTime();
+  }
+
+  onToDateChanged($event: Event) {
+    const target = $event.target as HTMLInputElement;
+    const selectedDate = new Date(target?.value);
+
+    this.lastIncludableCommitDate = selectedDate.getTime();
   }
 
   // https://medium.com/analytics-vidhya/building-racing-bar-chart-in-d3js-d89b71cd3439
