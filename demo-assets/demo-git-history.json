@@ -1,0 +1,94 @@
+{
+  "commits": [
+    {
+      "author": {
+        "user": { "name": "uid-11222", "email": "uid.11222@gmail.com" },
+        "date": "2016-07-04T08:49:16+03:00"
+      },
+      "message": "Fix \"send error arg to callback\" test."
+    },
+    {
+      "author": {
+        "user": { "name": "uid-11222", "email": "uid.11222@gmail.com" },
+        "date": "2020-07-04T08:43:46+03:00"
+      },
+      "message": "Add check-history.js and test.js, remove test filed."
+    },
+    {
+      "author": {
+        "user": { "name": "user 2 name", "email": "user2@example.com" },
+        "date": "2023-07-04T08:43:46+03:00"
+      },
+      "message": "Dummy commit by user2."
+    },
+    {
+      "author": {
+        "user": { "name": "user 2 name", "email": "user2@example.com" },
+        "date": "2025-07-04T08:43:46+03:00"
+      },
+      "message": "Dummy commit by user2."
+    }
+  ],
+  "REFS": {
+    "HEAD": "master",
+    "ORIG_HEAD": "baf2f375fd1575a86e7905585bd8341a9bb2655c"
+  },
+  "heads": {
+    "master": {
+      "sha1": "a854f3c79aa87f3be037eb8d5290a597a54c620c",
+      "type": "commit",
+      "size": 235,
+      "upstream":"refs/remotes/origin/master",
+      "push":"refs/remotes/origin/master",
+      "HEAD": true
+    },
+    "bar-branch": {
+      "sha1": "2cdcaf057f56e4d6a7ff215fda8cee319d76a9c6",
+      "type": "commit",
+      "size": 221
+    },
+    "foo-branch": {
+      "sha1": "d0fce431c26b32805af6607c5012e00ec429a0ca",
+      "type": "commit",
+      "size": 221
+    }
+  },
+  "tags": {
+    "v1.2": {
+      "sha1": "5af52613903caa57e446827314273a0790513ea2",
+      "type": "tag",
+      "size": 138,
+      "objecttype": "commit",
+      "object": "70c1d32ae8f353a3e22e73044090337d021b3987",
+      "tagger": {
+        "user": { "name": "uid-11222", "email": "uid.11222@gmail.com" },
+        "date": "2016-05-28T07:30:13+03:00"
+      },
+      "message": "My message."
+    },
+    "v1.3": {
+      "sha1": "2f7c073ea3371089f8fc8039a617ad4f568593d6",
+      "type": "commit",
+      "size": 243
+    }
+  },
+  "remotes": {
+    "origin": {
+      "ab": {
+        "sha1": "70c1d32ae8f353a3e22e73044090337d021b3987",
+        "type": "commit",
+        "size": 178
+      },
+      "br11": {
+        "sha1": "cc699fd283d0ecf33c6f3fe368840ce8345c9fc4",
+        "type": "commit",
+        "size": 222
+      }
+    }
+  },
+  "stash": {
+    "sha1": "b817416d8e65eb6292fc3d63fc7526be9478b461",
+    "type": "commit",
+    "size": 306
+  }
+}
