@@ -3,14 +3,14 @@
     {
       "author": {
         "user": { "name": "uid-11222", "email": "uid.11222@gmail.com" },
-        "date": "2016-07-04T08:49:16+03:00"
+        "date": "2016-05-04T08:49:16+03:00"
       },
       "message": "Fix \"send error arg to callback\" test."
     },
     {
       "author": {
         "user": { "name": "uid-11222", "email": "uid.11222@gmail.com" },
-        "date": "2020-07-04T08:43:46+03:00"
+        "date": "2020-06-04T08:43:46+03:00"
       },
       "message": "Add check-history.js and test.js, remove test filed."
     },
@@ -19,14 +19,14 @@
         "user": { "name": "user 2 name", "email": "user2@example.com" },
         "date": "2023-07-04T08:43:46+03:00"
       },
-      "message": "Dummy commit by user2."
+      "message": "Dummy commit 1 by user2."
     },
     {
       "author": {
         "user": { "name": "user 2 name", "email": "user2@example.com" },
-        "date": "2025-07-04T08:43:46+03:00"
+        "date": "2025-08-04T08:43:46+03:00"
       },
-      "message": "Dummy commit by user2."
+      "message": "Dummy commit 2 by user2."
     }
   ],
   "REFS": {

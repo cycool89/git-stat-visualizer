@@ -11,6 +11,8 @@ export class CommitCountRaceComponent implements OnInit {
   lastDate!: Date;
   speed: number = 5;
   multiplier: number = 1;
+  minDate!: number;
+  maxDate!: number;
   firstIncludableCommitDate!: number;
   lastIncludableCommitDate!: number;
   private fontSize!: number;
@@ -28,6 +30,8 @@ export class CommitCountRaceComponent implements OnInit {
     this._gitHistory = value;
     this.firstIncludableCommitDate = value?.[0]?.date.getTime();
     this.lastIncludableCommitDate = value?.[value.length - 1]?.date.getTime();
+    this.minDate = this.firstIncludableCommitDate;
+    this.maxDate = this.lastIncludableCommitDate;
   }
 
   private _gitHistory: ICommitRace[] = [];
@@ -79,7 +83,7 @@ export class CommitCountRaceComponent implements OnInit {
     const target = $event.target as HTMLInputElement;
     const selectedDate = new Date(target?.value);
 
-    this.lastIncludableCommitDate = selectedDate.getTime();
+    this.lastIncludableCommitDate = selectedDate.getTime() + 86400000 - 1;
   }
 
   // https://medium.com/analytics-vidhya/building-racing-bar-chart-in-d3js-d89b71cd3439
@@ -206,6 +210,7 @@ export class CommitCountRaceComponent implements OnInit {
       }
     }
     this.lastDate = new Date(commit.date);
+    console.log(this.firstIncludableCommitDate, this.lastIncludableCommitDate, commit.date.getTime());
     if (commit.date.getTime() >= this.firstIncludableCommitDate && commit.date.getTime() <= this.lastIncludableCommitDate) {
       this.commitCount[uniqueName || commit.name]++;
       this.commitData[uniqueName || commit.name].count++;
