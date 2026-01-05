@@ -16,6 +16,9 @@ export class CommitCountRaceComponent implements OnInit {
   private container!: d3.Selection<SVGGElement, {key: string, value: number}[], HTMLElement, any>;
   private widthScale!: d3.ScaleLinear<number, number, never>;
   private axisTop!: d3.Selection<any, unknown, HTMLElement, any>;
+  protected firstIncludableCommitDate!: number;
+  protected lastIncludableCommitDate!: number;
+
   get gitHistory(): ICommitRace[] {
     return this._gitHistory;
   }
@@ -23,6 +26,8 @@ export class CommitCountRaceComponent implements OnInit {
   @Input()
   set gitHistory(value: ICommitRace[]) {
     this._gitHistory = value;
+    this.firstIncludableCommitDate = value[0].date.getTime();
+    this.lastIncludableCommitDate = value[value.length - 1].date.getTime();
   }
 
   private _gitHistory: ICommitRace[] = [];
@@ -187,8 +192,10 @@ export class CommitCountRaceComponent implements OnInit {
       }
     }
     this.lastDate = new Date(commit.date);
-    this.commitCount[uniqueName || commit.name]++;
-    this.commitData[uniqueName || commit.name].count++;
+    if (commit.date.getTime() >= this.firstIncludableCommitDate && commit.date.getTime() <= this.lastIncludableCommitDate) {
+      this.commitCount[uniqueName || commit.name]++;
+      this.commitData[uniqueName || commit.name].count++;
+    }
   }
 
   private createSvg(): d3.Selection<SVGGElement, unknown, HTMLElement, any> {
